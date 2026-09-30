@@ -20,21 +20,49 @@
 
 <aside class="sidebar">
 
-<div class="brand">🌐 CS Routing</div>
+<div class="brand">
 
-<div class="role">Prototype v1</div>
+<div class="brand-icon">CS</div>
 
-<nav>
+<div>
 
-<button class="nav active" data-page="dashboard">📊 Dashboard</button>
+<div class="brand-title">CS Routing</div>
 
-<button class="nav" data-page="cs">👥 Data CS</button>
+<div class="brand-subtitle">Management System</div>
 
-<button class="nav" data-page="customers">👤 Customer</button>
+</div>
 
-<button class="nav" data-page="routing">🎲 Routing</button>
+</div>
 
-</nav>
+<div class="sidebar-section">MAIN MENU</div>
+
+<button class="nav active" data-page="dashboard">📊 <span>Dashboard</span></button>
+
+<button class="nav" data-page="cs">👥 <span>Data CS</span></button>
+
+<button class="nav" data-page="whatsapp">💬 <span>Akun WhatsApp</span></button>
+
+<button class="nav" data-page="customers">📋 <span>Customer</span></button>
+
+<button class="nav" data-page="routing">🎯 <span>Routing</span></button>
+
+<div class="sidebar-bottom">
+
+<div class="system-status">
+
+<span class="status-dot"></span>
+
+<div>
+
+<strong>System Online</strong>
+
+<small>Semua layanan aktif</small>
+
+</div>
+
+</div>
+
+</div>
 
 </aside>
 
@@ -46,47 +74,135 @@
 
 <h1 id="pageTitle">Dashboard</h1>
 
-<p>Satu dashboard untuk Admin dan CS</p>
+<p>Kelola CS, WhatsApp dan customer dalam satu sistem.</p>
 
 </div>
 
-<div class="user">👑 Admin</div>
+<div class="top-user">
+
+<div class="avatar">A</div>
+
+<div>
+
+<strong>Administrator</strong>
+
+<small>Admin</small>
+
+</div>
+
+</div>
 
 </header>
 
 <section id="dashboard" class="page active">
 
+<div class="welcome-card">
+
+<div>
+
+<span class="eyebrow">CONTROL CENTER</span>
+
+<h2>Selamat datang di CS Routing</h2>
+
+<p>Pantau aktivitas CS dan customer dari satu dashboard.</p>
+
+</div>
+
+<div class="welcome-icon">⚡</div>
+
+</div>
+
 <div class="stats">
 
-<div class="stat">
+<div class="stat-card">
 
-<span>🟢 CS ONLINE</span>
+<div class="stat-icon green">●</div>
+
+<div>
+
+<span>CS ONLINE</span>
 
 <strong id="onlineCount">0</strong>
 
+<small>Siap menerima customer</small>
+
 </div>
 
-<div class="stat">
+</div>
 
-<span>👥 TOTAL CS</span>
+<div class="stat-card">
+
+<div class="stat-icon blue">👥</div>
+
+<div>
+
+<span>TOTAL CS</span>
 
 <strong id="totalCs">0</strong>
 
+<small>Terdaftar di sistem</small>
+
 </div>
 
-<div class="stat">
+</div>
 
-<span>🟢 ADA CHAT</span>
+<div class="stat-card">
+
+<div class="stat-icon purple">💬</div>
+
+<div>
+
+<span>ADA CHAT</span>
 
 <strong id="chatCount">0</strong>
 
+<small>Customer sudah chat</small>
+
 </div>
 
-<div class="stat">
+</div>
 
-<span>🔴 TIDAK ADA CHAT</span>
+<div class="stat-card">
+
+<div class="stat-icon red">○</div>
+
+<div>
+
+<span>TIDAK ADA CHAT</span>
 
 <strong id="noChatCount">0</strong>
+
+<small>Belum melakukan chat</small>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="dashboard-grid">
+
+<div class="panel">
+
+<div class="panel-head">
+
+<div>
+
+<h2>Status Sistem</h2>
+
+<p>Informasi layanan saat ini</p>
+
+</div>
+
+</div>
+
+<div class="system-list">
+
+<div class="system-row"><span>Database</span><strong class="online-text">● Connected</strong></div>
+
+<div class="system-row"><span>CS Routing</span><strong class="online-text">● Active</strong></div>
+
+<div class="system-row"><span>WhatsApp</span><strong class="waiting-text">● Setup Required</strong></div>
 
 </div>
 
@@ -94,13 +210,39 @@
 
 <div class="panel">
 
-<h2>Aktivitas Sistem</h2>
+<div class="panel-head">
 
-<p class="muted">
+<div>
 
-Prototype sistem routing customer ke CS.
+<h2>Quick Actions</h2>
 
-</p>
+<p>Akses fitur utama</p>
+
+</div>
+
+</div>
+
+<div class="quick-actions">
+
+<button class="quick-btn" onclick="document.querySelector('[data-page=cs]').click()">
+
+<span>👥</span>
+
+<div><strong>Tambah CS</strong><small>Daftarkan CS baru</small></div>
+
+</button>
+
+<button class="quick-btn" onclick="document.querySelector('[data-page=whatsapp]').click()">
+
+<span>💬</span>
+
+<div><strong>Tambah WhatsApp</strong><small>Hubungkan akun CS</small></div>
+
+</button>
+
+</div>
+
+</div>
 
 </div>
 
@@ -108,19 +250,23 @@ Prototype sistem routing customer ke CS.
 
 <section id="cs" class="page">
 
-<div class="panel">
+<div class="page-header">
 
-<div class="panel-head">
+<div>
 
-<h2>👥 Data CS</h2>
+<span class="eyebrow">MANAGEMENT</span>
 
-<button class="primary" id="addCsBtn">
+<h2>Data CS</h2>
 
-➕ Tambah CS
-
-</button>
+<p>Kelola daftar customer service dan status mereka.</p>
 
 </div>
+
+<button class="primary" id="addCsBtn">+ Tambah CS</button>
+
+</div>
+
+<div class="panel">
 
 <div class="table-wrap">
 
@@ -130,13 +276,13 @@ Prototype sistem routing customer ke CS.
 
 <tr>
 
-<th>Nama</th>
+<th>NAMA CS</th>
 
-<th>WhatsApp</th>
+<th>WHATSAPP</th>
 
-<th>Status</th>
+<th>STATUS</th>
 
-<th>Aksi</th>
+<th>UBAH STATUS</th>
 
 </tr>
 
@@ -152,21 +298,85 @@ Prototype sistem routing customer ke CS.
 
 </section>
 
+<section id="whatsapp" class="page">
+
+<div class="page-header">
+
+<div>
+
+<span class="eyebrow">WHATSAPP MANAGEMENT</span>
+
+<h2>Akun WhatsApp CS</h2>
+
+<p>Kelola akun WhatsApp yang digunakan oleh setiap CS.</p>
+
+</div>
+
+<button class="primary" id="addWhatsappBtn">+ Tambah WhatsApp</button>
+
+</div>
+
+<div class="notice-card">
+
+<div class="notice-icon">💬</div>
+
+<div>
+
+<strong>Hubungkan WhatsApp CS</strong>
+
+<p>Tambahkan akun WhatsApp untuk CS melalui metode yang tersedia.</p>
+
+</div>
+
+</div>
+
+<div id="whatsappList" class="whatsapp-grid">
+
+<div class="empty-state">
+
+<div>💬</div>
+
+<strong>Belum ada akun WhatsApp</strong>
+
+<p>Tambahkan akun WhatsApp CS untuk mulai mengelolanya.</p>
+
+<button class="secondary" id="emptyWhatsappBtn">+ Tambah Akun</button>
+
+</div>
+
+</div>
+
+</section>
+
 <section id="customers" class="page">
 
-<div class="panel">
+<div class="page-header">
 
-<h2>👤 Customer</h2>
+<div>
+
+<span class="eyebrow">CUSTOMER MANAGEMENT</span>
+
+<h2>Customer</h2>
+
+<p>Cari dan pantau customer yang masuk melalui sistem.</p>
+
+</div>
+
+</div>
+
+<div class="panel">
 
 <div class="search">
 
 <input id="customerSearch" placeholder="Cari nomor WhatsApp customer...">
 
-<button class="primary" id="searchBtn">🔎 Cari</button>
+<button class="primary" id="searchBtn">Cari</button>
 
 </div>
 
 <div id="searchResult" class="result hidden"></div>
+
+<div class="table-wrap">
 
 <table>
 
@@ -174,13 +384,13 @@ Prototype sistem routing customer ke CS.
 
 <tr>
 
-<th>Nomor WhatsApp</th>
+<th>WHATSAPP CUSTOMER</th>
 
 <th>CS</th>
 
-<th>Status Chat</th>
+<th>STATUS CHAT</th>
 
-<th>Waktu</th>
+<th>WAKTU MASUK</th>
 
 </tr>
 
@@ -192,25 +402,35 @@ Prototype sistem routing customer ke CS.
 
 </div>
 
+</div>
+
 </section>
 
 <section id="routing" class="page">
 
-<div class="panel">
+<div class="page-header">
 
-<h2>🎲 Simulasi Routing</h2>
+<div>
 
-<p class="muted">
+<span class="eyebrow">ROUTING ENGINE</span>
 
-Sistem hanya memilih CS yang berstatus ONLINE.
+<h2>Customer Routing</h2>
 
-</p>
+<p>Kelola dan uji pemilihan CS yang sedang ONLINE.</p>
 
-<button class="primary big" id="routeBtn">
+</div>
 
-🎲 Pilih CS ONLINE
+</div>
 
-</button>
+<div class="routing-card">
+
+<div class="routing-icon">🎯</div>
+
+<h2>Smart CS Routing</h2>
+
+<p>Sistem akan memilih salah satu CS yang berstatus ONLINE.</p>
+
+<button class="primary big" id="routeBtn">Pilih CS ONLINE</button>
 
 <div id="routeResult" class="route-result hidden"></div>
 
@@ -226,27 +446,45 @@ Sistem hanya memilih CS yang berstatus ONLINE.
 
 <div class="modal-box">
 
-<h2>Tambah CS</h2>
+<div class="modal-title">
 
-<input id="newName" placeholder="Nama CS">
+<div>
 
-<input id="newPhone" placeholder="Nomor WhatsApp">
+<span class="eyebrow">NEW CS</span>
+
+<h2>Tambah Customer Service</h2>
+
+</div>
+
+<button class="modal-close" id="cancelBtn">×</button>
+
+</div>
+
+<label>Nama CS</label>
+
+<input id="newName" placeholder="Contoh: Andi">
+
+<label>Nomor WhatsApp</label>
+
+<input id="newPhone" placeholder="628xxxxxxxxxx">
+
+<label>Status awal</label>
 
 <select id="newStatus">
 
-<option value="ONLINE">🟢 ONLINE</option>
+<option value="OFFLINE">OFFLINE</option>
 
-<option value="OFFLINE">⚪ OFFLINE</option>
+<option value="ONLINE">ONLINE</option>
 
-<option value="NONAKTIF">🔴 NONAKTIF</option>
+<option value="NONAKTIF">NONAKTIF</option>
 
 </select>
 
 <div class="modal-actions">
 
-<button class="secondary" id="cancelBtn">Batal</button>
+<button class="secondary" id="cancelBtn2">Batal</button>
 
-<button class="primary" id="saveBtn">Simpan</button>
+<button class="primary" id="saveBtn">Simpan CS</button>
 
 </div>
 
