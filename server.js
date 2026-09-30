@@ -16,11 +16,15 @@ ssl: { rejectUnauthorized: false }
 
 });
 
+app.use(express.json());
+
+app.use(express.static(path.join(__dirname)));
+
 async function initDatabase() {
 
 try {
 
-` await pool.query(``
+await pool.query(
 
 CREATE TABLE IF NOT EXISTS cs (
 
@@ -34,11 +38,11 @@ status VARCHAR(20) NOT NULL DEFAULT 'OFFLINE',
 
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
+)
+
 );
 
-\);`
-
-` await pool.query(``
+await pool.query(
 
 CREATE TABLE IF NOT EXISTS customers (
 
@@ -52,9 +56,9 @@ chat_status VARCHAR(20) NOT NULL DEFAULT 'TIDAK ADA CHAT',
 
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
-);
+)
 
-\);`
+);
 
 console.log("Database tables siap.");
 
@@ -65,24 +69,6 @@ console.error("Gagal membuat tabel:", error);
 }
 
 }
-
-Lalu cari bagian paling bawah:
-
-app.listen(PORT, "0.0.0.0", () => {
-
-dan ubah menjadi:
-
-app.listen(PORT, "0.0.0.0", async () => {
-
-console.log("CS Routing System berjalan di port " + PORT);
-
-await initDatabase();
-
-});
-
-app.use(express.json());
-
-app.use(express.static(path.join(__dirname)));
 
 app.get("/", (req, res) => {
 
@@ -122,8 +108,10 @@ message: "Database gagal terhubung"
 
 });
 
-app.listen(PORT, "0.0.0.0", () => {
+app.listen(PORT, "0.0.0.0", async () => {
 
 console.log("CS Routing System berjalan di port " + PORT);
+
+await initDatabase();
 
 });
