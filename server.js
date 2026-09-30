@@ -76,6 +76,24 @@ message: "Database gagal terhubung"
 
 });
 
+app.get("/api/cs", async (req, res) => {
+
+try {
+
+const result = await pool.query("SELECT * FROM cs ORDER BY id ASC");
+
+res.json(result.rows);
+
+} catch (error) {
+
+console.error(error);
+
+res.status(500).json({ error: "Gagal mengambil data CS" });
+
+}
+
+});
+
 app.listen(PORT, "0.0.0.0", async () => {
 
 console.log("CS Routing System berjalan di port " + PORT);
