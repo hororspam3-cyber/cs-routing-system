@@ -8,13 +8,7 @@ const app = express();
 
 const PORT = process.env.PORT || 10000;
 
-const pool = new Pool({
-
-connectionString: process.env.DATABASE_URL,
-
-ssl: { rejectUnauthorized: false }
-
-});
+const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
 
 app.use(express.json());
 
@@ -50,27 +44,13 @@ try {
 
 const result = await pool.query("SELECT NOW() AS waktu");
 
-res.json({
-
-success: true,
-
-message: "Database berhasil terhubung",
-
-waktu: result.rows[0].waktu
-
-});
+res.json({ success: true, message: "Database berhasil terhubung", waktu: result.rows[0].waktu });
 
 } catch (error) {
 
 console.error(error);
 
-res.status(500).json({
-
-success: false,
-
-message: "Database gagal terhubung"
-
-});
+res.status(500).json({ success: false, message: "Database gagal terhubung" });
 
 }
 
@@ -98,7 +78,11 @@ app.post("/api/cs", async (req, res) => {
 
 try {
 
-const { name, phone, status } = req.body;
+const name = req.body.name;
+
+const phone = req.body.phone;
+
+const status = req.body.status || "OFFLINE";
 
 if (!name || !phone) {
 
@@ -106,15 +90,7 @@ return res.status(400).json({ error: "Nama dan nomor WhatsApp wajib diisi" });
 
 }
 
-const result = await pool.query(
-
-INSERT INTO cs (name, phone, status)
-
-VALUES ($1, $2, $3)
-
-RETURNING *
-
-, [name, phone, status || "OFFLINE"]);`
+const result = await pool.query("INSERT INTO cs (name, phone, status) VALUES ($1, $2, $3) RETURNING *", [name, phone, status]);
 
 res.status(201).json(result.rows[0]);
 
@@ -132,7 +108,7 @@ app.patch("/api/cs/:id/status", async (req, res) => {
 
 try {
 
-const { status } = req.body;
+const status = req.body.status;
 
 const allowed = ["ONLINE", "OFFLINE", "NONAKTIF"];
 
@@ -142,11 +118,7 @@ return res.status(400).json({ error: "Status tidak valid" });
 
 }
 
-const result = await pool.query(
-
-UPDATE cs SET status = $1 WHERE id = $2 RETURNING *
-
-, [status, req.params.id]);`
+const result = await pool.query("UPDATE cs SET status = $1 WHERE id = $2 RETURNING *", [status, req.params.id]);
 
 if (!result.rows.length) {
 
