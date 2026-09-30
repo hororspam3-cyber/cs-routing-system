@@ -46,49 +46,9 @@ $("chatCount").textContent = customers.filter(x => x.chat).length;
 
 $("noChatCount").textContent = customers.filter(x => !x.chat).length;
 
-$("csTable").innerHTML = cs.map(x =>
+$("csTable").innerHTML = cs.map(x => '<tr><td>' + x.name + '</td><td>' + x.phone + '</td><td>' + statusLabel(x.status) + '</td><td><select onchange="changeStatus(' + x.id + ', this.value)"><option value="ONLINE" ' + (x.status === "ONLINE" ? "selected" : "") + '>ONLINE</option><option value="OFFLINE" ' + (x.status === "OFFLINE" ? "selected" : "") + '>OFFLINE</option><option value="NONAKTIF" ' + (x.status === "NONAKTIF" ? "selected" : "") + '>NONAKTIF</option></select></td></tr>').join("");
 
-'<tr>' +
-
-'<td>' + x.name + '</td>' +
-
-'<td>' + x.phone + '</td>' +
-
-'<td>' + statusLabel(x.status) + '</td>' +
-
-'<td>' +
-
-'<select onchange="changeStatus(' + x.id + ', this.value)">' +
-
-'<option value="ONLINE" ' + (x.status === "ONLINE" ? "selected" : "") + '>ONLINE</option>' +
-
-'<option value="OFFLINE" ' + (x.status === "OFFLINE" ? "selected" : "") + '>OFFLINE</option>' +
-
-'<option value="NONAKTIF" ' + (x.status === "NONAKTIF" ? "selected" : "") + '>NONAKTIF</option>' +
-
-'</select>' +
-
-'</td>' +
-
-'</tr>'
-
-).join("");
-
-$("customerTable").innerHTML = customers.map(x =>
-
-'<tr>' +
-
-'<td>' + x.phone + '</td>' +
-
-'<td>' + x.cs + '</td>' +
-
-'<td>' + (x.chat ? '<span class="status online">🟢 ADA CHAT</span>' : '<span class="status inactive">🔴 TIDAK ADA CHAT</span>') + '</td>' +
-
-'<td>' + x.time + '</td>' +
-
-'</tr>'
-
-).join("");
+$("customerTable").innerHTML = customers.map(x => '<tr><td>' + x.phone + '</td><td>' + x.cs + '</td><td>' + (x.chat ? '<span class="status online">🟢 ADA CHAT</span>' : '<span class="status inactive">🔴 TIDAK ADA CHAT</span>') + '</td><td>' + x.time + '</td></tr>').join("");
 
 }
 
@@ -96,15 +56,7 @@ async function changeStatus(id, status){
 
 try {
 
-const response = await fetch("/api/cs/" + id + "/status", {
-
-method: "PATCH",
-
-headers: { "Content-Type": "application/json" },
-
-body: JSON.stringify({ status: status })
-
-});
+const response = await fetch("/api/cs/" + id + "/status",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({status:status})});
 
 if(!response.ok) throw new Error("Gagal mengubah status");
 
@@ -138,15 +90,7 @@ return;
 
 try {
 
-const response = await fetch("/api/cs", {
-
-method: "POST",
-
-headers: { "Content-Type": "application/json" },
-
-body: JSON.stringify({ name: name, phone: phone, status: status })
-
-});
+const response = await fetch("/api/cs",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:name,phone:phone,status:status})});
 
 const data = await response.json();
 
@@ -208,6 +152,102 @@ $("whatsappModal").classList.add("hidden");
 
 }
 
+async function loadWhatsapp(){
+
+try {
+
+const response = await fetch("/api/whatsapp");
+
+if(!response.ok) throw new Error("Gagal mengambil akun WhatsApp");
+
+const accounts = await response.json();
+
+const list = $("whatsappList");
+
+if(!accounts.length){
+
+list.innerHTML = '<div class="empty-state"><div>💬</div><strong>Belum ada akun WhatsApp</strong><p>Tambahkan akun WhatsApp CS untuk mulai mengelolanya.</p><button class="secondary" id="emptyWhatsappBtn">+ Tambah Akun</button></div>';
+
+$("emptyWhatsappBtn").onclick = openWhatsappModal;
+
+return;
+
+}
+
+list.innerHTML = accounts.map(x => '<div class="panel"><strong>' + x.cs_name + '</strong><p>' + x.phone + '</p>' + statusLabel(x.status) + '<br><br><select onchange="changeWhatsappStatus(' + x.id + ', this.value)"><option value="ONLINE" ' + (x.status === "ONLINE" ? "selected" : "") + '>ONLINE</option><option value="OFFLINE" ' + (x.status === "OFFLINE" ? "selected" : "") + '>OFFLINE</option><option value="NONAKTIF" ' + (x.status === "NONAKTIF" ? "selected" : "") + '>NONAKTIF</option></select></div>').join("");
+
+} catch(error) {
+
+console.error(error);
+
+alert("Gagal mengambil akun WhatsApp.");
+
+}
+
+}
+
+async function saveWhatsapp(){
+
+const csId = $("whatsappCs").value;
+
+const phone = $("whatsappNumber").value.trim();
+
+const status = $("whatsappStatus").value;
+
+if(!csId || !phone){
+
+alert("CS dan nomor WhatsApp wajib diisi.");
+
+return;
+
+}
+
+try {
+
+const response = await fetch("/api/whatsapp",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({cs_id:csId,phone:phone,status:status})});
+
+const data = await response.json();
+
+if(!response.ok) throw new Error(data.error || "Gagal menyimpan akun WhatsApp");
+
+$("whatsappNumber").value = "";
+
+$("whatsappStatus").value = "OFFLINE";
+
+closeWhatsappModal();
+
+await loadWhatsapp();
+
+} catch(error) {
+
+console.error(error);
+
+alert(error.message);
+
+}
+
+}
+
+async function changeWhatsappStatus(id, status){
+
+try {
+
+const response = await fetch("/api/whatsapp/" + id + "/status",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({status:status})});
+
+if(!response.ok) throw new Error("Gagal mengubah status WhatsApp");
+
+await loadWhatsapp();
+
+} catch(error) {
+
+console.error(error);
+
+alert("Gagal mengubah status WhatsApp.");
+
+}
+
+}
+
 function searchCustomer(){
 
 const q = $("customerSearch").value.trim();
@@ -254,11 +294,7 @@ box.innerHTML = '<strong>🎯 CS terpilih: ' + selected.name + '</strong><br>Wha
 
 $("searchBtn").onclick = searchCustomer;
 
-$("customerSearch").onkeydown = e => {
-
-if(e.key === "Enter") searchCustomer();
-
-};
+$("customerSearch").onkeydown = e => {if(e.key === "Enter") searchCustomer();};
 
 $("routeBtn").onclick = routeCustomer;
 
@@ -278,6 +314,8 @@ $("whatsappCancelBtn").onclick = closeWhatsappModal;
 
 $("whatsappCancelBtn2").onclick = closeWhatsappModal;
 
+$("whatsappSaveBtn").onclick = saveWhatsapp;
+
 document.querySelectorAll(".nav").forEach(btn => {
 
 btn.onclick = () => {
@@ -290,19 +328,7 @@ btn.classList.add("active");
 
 $(btn.dataset.page).classList.add("active");
 
-const titles = {
-
-dashboard: "Dashboard",
-
-cs: "Data CS",
-
-whatsapp: "Akun WhatsApp",
-
-customers: "Customer",
-
-routing: "Routing"
-
-};
+const titles = {dashboard:"Dashboard",cs:"Data CS",whatsapp:"Akun WhatsApp",customers:"Customer",routing:"Routing"};
 
 $("pageTitle").textContent = titles[btn.dataset.page];
 
@@ -311,3 +337,5 @@ $("pageTitle").textContent = titles[btn.dataset.page];
 });
 
 loadCs();
+
+loadWhatsapp();
