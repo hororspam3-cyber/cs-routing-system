@@ -172,6 +172,42 @@ alert(error.message);
 
 }
 
+function openWhatsappModal(){
+
+const select = $("whatsappCs");
+
+select.innerHTML = "";
+
+if(!cs.length){
+
+select.innerHTML = '<option value="">Belum ada CS</option>';
+
+} else {
+
+cs.forEach(x => {
+
+const option = document.createElement("option");
+
+option.value = x.id;
+
+option.textContent = x.name + " - " + x.phone;
+
+select.appendChild(option);
+
+});
+
+}
+
+$("whatsappModal").classList.remove("hidden");
+
+}
+
+function closeWhatsappModal(){
+
+$("whatsappModal").classList.add("hidden");
+
+}
+
 function searchCustomer(){
 
 const q = $("customerSearch").value.trim();
@@ -184,17 +220,7 @@ box.classList.remove("hidden");
 
 if(found){
 
-box.innerHTML =
-
-'<strong>✅ Customer ditemukan</strong><br>' +
-
-'Nomor: ' + found.phone + '<br>' +
-
-'CS: ' + found.cs + '<br>' +
-
-'Status: ' + (found.chat ? "🟢 ADA CHAT" : "🔴 TIDAK ADA CHAT") + '<br>' +
-
-'Waktu masuk: ' + found.time;
+box.innerHTML = '<strong>✅ Customer ditemukan</strong><br>Nomor: ' + found.phone + '<br>CS: ' + found.cs + '<br>Status: ' + (found.chat ? "🟢 ADA CHAT" : "🔴 TIDAK ADA CHAT") + '<br>Waktu masuk: ' + found.time;
 
 } else {
 
@@ -222,13 +248,7 @@ return;
 
 const selected = online[Math.floor(Math.random() * online.length)];
 
-box.innerHTML =
-
-'<strong>🎯 CS terpilih: ' + selected.name + '</strong><br>' +
-
-'WhatsApp: ' + selected.phone + '<br>' +
-
-'Status: 🟢 ONLINE';
+box.innerHTML = '<strong>🎯 CS terpilih: ' + selected.name + '</strong><br>WhatsApp: ' + selected.phone + '<br>Status: 🟢 ONLINE';
 
 }
 
@@ -246,7 +266,17 @@ $("addCsBtn").onclick = () => $("modal").classList.remove("hidden");
 
 $("cancelBtn").onclick = () => $("modal").classList.add("hidden");
 
+$("cancelBtn2").onclick = () => $("modal").classList.add("hidden");
+
 $("saveBtn").onclick = saveCs;
+
+$("addWhatsappBtn").onclick = openWhatsappModal;
+
+$("emptyWhatsappBtn").onclick = openWhatsappModal;
+
+$("whatsappCancelBtn").onclick = closeWhatsappModal;
+
+$("whatsappCancelBtn2").onclick = closeWhatsappModal;
 
 document.querySelectorAll(".nav").forEach(btn => {
 
@@ -265,6 +295,8 @@ const titles = {
 dashboard: "Dashboard",
 
 cs: "Data CS",
+
+whatsapp: "Akun WhatsApp",
 
 customers: "Customer",
 
