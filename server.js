@@ -94,6 +94,102 @@ res.status(500).json({ error: "Gagal mengambil data CS" });
 
 });
 
+app.post("/api/cs", async (req, res) => {
+
+try {
+
+const { name, phone, status } = req.body;
+
+if (!name || !phone) {
+
+return res.status(400).json({ error: "Nama dan nomor WhatsApp wajib diisi" });
+
+}
+
+const result = await pool.query(
+
+INSERT INTO cs (name, phone, status)
+
+VALUES ($1, $2, $3)
+
+RETURNING *
+
+, [name, phone, status || "OFFLINE"]);`
+
+res.status(201).json(result.rows[0]);
+
+} catch (error) {
+
+console.error(error);
+
+res.status(500).json({ error: "Gagal menambahkan CS" });
+
+}
+
+});
+
+app.patch("/api/cs/:id/status", async (req, res) => {
+
+try {
+
+const { status } = req.body;
+
+const allowed = ["ONLINE", "OFFLINE", "NONAKTIF"];
+
+if (!allowed.includes(status)) {
+
+return res.status(400).json({ error: "Status tidak valid" });
+
+}
+
+const result = await pool.query(
+
+UPDATE cs SET status = $1 WHERE id = $2 RETURNING *
+
+, [status, req.params.id]);`
+
+if (!result.rows.length) {
+
+return res.status(404).json({ error: "CS tidak ditemukan" });
+
+}
+
+res.json(result.rows[0]);
+
+} catch (error) {
+
+console.error(error);
+
+res.status(500).json({ error: "Gagal mengubah status CS" });
+
+}
+
+});
+
+app.delete("/api/cs/:id", async (req, res) => {
+
+try {
+
+const result = await pool.query("DELETE FROM cs WHERE id = $1 RETURNING *", [req.params.id]);
+
+if (!result.rows.length) {
+
+return res.status(404).json({ error: "CS tidak ditemukan" });
+
+}
+
+res.json({ success: true, message: "CS berhasil dihapus" });
+
+} catch (error) {
+
+console.error(error);
+
+res.status(500).json({ error: "Gagal menghapus CS" });
+
+}
+
+});
+
 app.listen(PORT, "0.0.0.0", async () => {
 
 console.log("CS Routing System berjalan di port " + PORT);
