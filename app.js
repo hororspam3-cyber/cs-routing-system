@@ -46,7 +46,7 @@ $("chatCount").textContent = customers.filter(x => x.chat).length;
 
 $("noChatCount").textContent = customers.filter(x => !x.chat).length;
 
-$("csTable").innerHTML = cs.map(x => '<tr><td>' + x.name + '</td><td>' + x.phone + '</td><td>' + statusLabel(x.status) + '</td><td><select onchange="changeStatus(' + x.id + ', this.value)"><option value="ONLINE" ' + (x.status === "ONLINE" ? "selected" : "") + '>ONLINE</option><option value="OFFLINE" ' + (x.status === "OFFLINE" ? "selected" : "") + '>OFFLINE</option><option value="NONAKTIF" ' + (x.status === "NONAKTIF" ? "selected" : "") + '>NONAKTIF</option></select></td></tr>').join("");
+$("csTable").innerHTML = cs.map(x => '<tr><td>' + x.name + '</td><td>' + x.phone + '</td><td><span class="status inactive">🔴 BELUM VERIFIKASI</span></td><td>' + statusLabel(x.status) + '</td><td><select onchange="changeStatus(' + x.id + ', this.value)"><option value="ONLINE" ' + (x.status === "ONLINE" ? "selected" : "") + '>ONLINE</option><option value="OFFLINE" ' + (x.status === "OFFLINE" ? "selected" : "") + '>OFFLINE</option><option value="NONAKTIF" ' + (x.status === "NONAKTIF" ? "selected" : "") + '>NONAKTIF</option></select></td></tr>').join("");
 
 $("customerTable").innerHTML = customers.map(x => '<tr><td>' + x.phone + '</td><td>' + x.cs + '</td><td>' + (x.chat ? '<span class="status online">🟢 ADA CHAT</span>' : '<span class="status inactive">🔴 TIDAK ADA CHAT</span>') + '</td><td>' + x.time + '</td></tr>').join("");
 
@@ -307,8 +307,6 @@ $("cancelBtn2").onclick = () => $("modal").classList.add("hidden");
 $("saveBtn").onclick = saveCs;
 
 $("addWhatsappBtn").onclick = openWhatsappModal;
-
-$("emptyWhatsappBtn").onclick = openWhatsappModal;
 
 $("whatsappCancelBtn").onclick = closeWhatsappModal;
 
