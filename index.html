@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html lang="id">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CS Routing System</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="app">
+
+<aside class="sidebar">
+
+<div class="brand">🌐 CS Routing</div>
+
+<div class="role">Prototype v1</div>
+
+<nav>
+
+<button class="nav active" data-page="dashboard">📊 Dashboard</button>
+
+<button class="nav" data-page="cs">👥 Data CS</button>
+
+<button class="nav" data-page="customers">👤 Customer</button>
+
+<button class="nav" data-page="routing">🎲 Routing</button>
+
+</nav>
+
+</aside>
+
+<main class="main">
+
+<header class="topbar">
+
+<div>
+
+<h1 id="pageTitle">Dashboard</h1>
+
+<p>Satu dashboard untuk Admin dan CS</p>
+
+</div>
+
+<div class="user">👑 Admin</div>
+
+</header>
+
+<section id="dashboard" class="page active">
+
+<div class="stats">
+
+<div class="stat">
+
+<span>🟢 CS ONLINE</span>
+
+<strong id="onlineCount">0</strong>
+
+</div>
+
+<div class="stat">
+
+<span>👥 TOTAL CS</span>
+
+<strong id="totalCs">0</strong>
+
+</div>
+
+<div class="stat">
+
+<span>🟢 ADA CHAT</span>
+
+<strong id="chatCount">0</strong>
+
+</div>
+
+<div class="stat">
+
+<span>🔴 TIDAK ADA CHAT</span>
+
+<strong id="noChatCount">0</strong>
+
+</div>
+
+</div>
+
+<div class="panel">
+
+<h2>Aktivitas Sistem</h2>
+
+<p class="muted">
+
+Prototype sistem routing customer ke CS.
+
+</p>
+
+</div>
+
+</section>
+
+<section id="cs" class="page">
+
+<div class="panel">
+
+<div class="panel-head">
+
+<h2>👥 Data CS</h2>
+
+<button class="primary" id="addCsBtn">
+
+➕ Tambah CS
+
+</button>
+
+</div>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Nama</th>
+
+<th>WhatsApp</th>
+
+<th>Status</th>
+
+<th>Aksi</th>
+
+</tr>
+
+</thead>
+
+<tbody id="csTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
+<section id="customers" class="page">
+
+<div class="panel">
+
+<h2>👤 Customer</h2>
+
+<div class="search">
+
+<input id="customerSearch" placeholder="Cari nomor WhatsApp customer...">
+
+<button class="primary" id="searchBtn">🔎 Cari</button>
+
+</div>
+
+<div id="searchResult" class="result hidden"></div>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Nomor WhatsApp</th>
+
+<th>CS</th>
+
+<th>Status Chat</th>
+
+<th>Waktu</th>
+
+</tr>
+
+</thead>
+
+<tbody id="customerTable"></tbody>
+
+</table>
+
+</div>
+
+</section>
+
+<section id="routing" class="page">
+
+<div class="panel">
+
+<h2>🎲 Simulasi Routing</h2>
+
+<p class="muted">
+
+Sistem hanya memilih CS yang berstatus ONLINE.
+
+</p>
+
+<button class="primary big" id="routeBtn">
+
+🎲 Pilih CS ONLINE
+
+</button>
+
+<div id="routeResult" class="route-result hidden"></div>
+
+</div>
+
+</section>
+
+</main>
+
+</div>
+
+<div id="modal" class="modal hidden">
+
+<div class="modal-box">
+
+<h2>Tambah CS</h2>
+
+<input id="newName" placeholder="Nama CS">
+
+<input id="newPhone" placeholder="Nomor WhatsApp">
+
+<select id="newStatus">
+
+<option value="ONLINE">🟢 ONLINE</option>
+
+<option value="OFFLINE">⚪ OFFLINE</option>
+
+<option value="NONAKTIF">🔴 NONAKTIF</option>
+
+</select>
+
+<div class="modal-actions">
+
+<button class="secondary" id="cancelBtn">Batal</button>
+
+<button class="primary" id="saveBtn">Simpan</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script src="app.js"></script>
+
+</body>
+
+</html>
