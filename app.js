@@ -1,68 +1,70 @@
-let cs = [
+let cs = [];
 
-{id:1,name:"Andi",phone:"628111111111",status:"ONLINE"},
-
-{id:2,name:"Budi",phone:"628222222222",status:"OFFLINE"},
-
-{id:3,name:"Citra",phone:"628333333333",status:"ONLINE"},
-
-{id:4,name:"Deni",phone:"628444444444",status:"NONAKTIF"},
-
-{id:5,name:"Eka",phone:"628555555555",status:"ONLINE"}
-
-];
-
-let customers = [
-
-{phone:"628123456789",cs:"Andi",chat:true,time:"Hari ini 09:10"},
-
-{phone:"628987654321",cs:"Citra",chat:false,time:"Hari ini 09:25"},
-
-{phone:"628777888999",cs:"Eka",chat:true,time:"Hari ini 09:40"}
-
-];
+let customers = [];
 
 const $ = id => document.getElementById(id);
 
 function statusLabel(status){
 
-if(status==="ONLINE") return '<span class="status online">🟢 ONLINE</span>';
+if(status === "ONLINE") return '<span class="status online">🟢 ONLINE</span>';
 
-if(status==="OFFLINE") return '<span class="status offline">⚪ OFFLINE</span>';
+if(status === "OFFLINE") return '<span class="status offline">⚪ OFFLINE</span>';
 
 return '<span class="status inactive">🔴 NONAKTIF</span>';
 
 }
 
+async function loadCs(){
+
+try {
+
+const response = await fetch("/api/cs");
+
+if(!response.ok) throw new Error("Gagal mengambil data CS");
+
+cs = await response.json();
+
+render();
+
+} catch(error) {
+
+console.error(error);
+
+alert("Gagal mengambil data CS dari database.");
+
+}
+
+}
+
 function render(){
 
-$("onlineCount").textContent = cs.filter(x=>x.status==="ONLINE").length;
+$("onlineCount").textContent = cs.filter(x => x.status === "ONLINE").length;
 
 $("totalCs").textContent = cs.length;
 
-$("chatCount").textContent = customers.filter(x=>x.chat).length;
+$("chatCount").textContent = customers.filter(x => x.chat).length;
 
-$("noChatCount").textContent = customers.filter(x=>!x.chat).length;
+$("noChatCount").textContent = customers.filter(x => !x.chat).length;
 
-$("csTable").innerHTML = cs.map((x,i)=>
+$("csTable").innerHTML = cs.map(x =>
 
 '<tr>' +
 
-'<td>'+x.name+'</td>' +
+'<td>' + x.name + '</td>' +
 
-'<td>'+x.phone+'</td>' +
+'<td>' + x.phone + '</td>' +
 
-'<td>'+statusLabel(x.status)+'</td>' +
+'<td>' + statusLabel(x.status) + '</td>' +
 
 '<td>' +
 
-'<select onchange="changeStatus('+i+',this.value)">' +
+'<select onchange="changeStatus(' + x.id + ', this.value)">' +
 
-'<option value="ONLINE" '+(x.status==="ONLINE"?"selected":"")+' >ONLINE</option>' +
+'<option value="ONLINE" ' + (x.status === "ONLINE" ? "selected" : "") + '>ONLINE</option>' +
 
-'<option value="OFFLINE" '+(x.status==="OFFLINE"?"selected":"")+' >OFFLINE</option>' +
+'<option value="OFFLINE" ' + (x.status === "OFFLINE" ? "selected" : "") + '>OFFLINE</option>' +
 
-'<option value="NONAKTIF" '+(x.status==="NONAKTIF"?"selected":"")+' >NONAKTIF</option>' +
+'<option value="NONAKTIF" ' + (x.status === "NONAKTIF" ? "selected" : "") + '>NONAKTIF</option>' +
 
 '</select>' +
 
@@ -72,17 +74,17 @@ $("csTable").innerHTML = cs.map((x,i)=>
 
 ).join("");
 
-$("customerTable").innerHTML = customers.map(x=>
+$("customerTable").innerHTML = customers.map(x =>
 
 '<tr>' +
 
-'<td>'+x.phone+'</td>' +
+'<td>' + x.phone + '</td>' +
 
-'<td>'+x.cs+'</td>' +
+'<td>' + x.cs + '</td>' +
 
-'<td>'+(x.chat ? '<span class="status online">🟢 ADA CHAT</span>' : '<span class="status inactive">🔴 TIDAK ADA CHAT</span>')+'</td>' +
+'<td>' + (x.chat ? '<span class="status online">🟢 ADA CHAT</span>' : '<span class="status inactive">🔴 TIDAK ADA CHAT</span>') + '</td>' +
 
-'<td>'+x.time+'</td>' +
+'<td>' + x.time + '</td>' +
 
 '</tr>'
 
@@ -90,99 +92,41 @@ $("customerTable").innerHTML = customers.map(x=>
 
 }
 
-function changeStatus(index,status){
+async function changeStatus(id, status){
 
-cs[index].status=status;
+try {
 
-render();
+const response = await fetch("/api/cs/" + id + "/status", {
 
-}
+method: "PATCH",
 
-function searchCustomer(){
+headers: { "Content-Type": "application/json" },
 
-const q=$("customerSearch").value.trim();
+body: JSON.stringify({ status: status })
 
-const found=customers.find(x=>x.phone===q);
+});
 
-const box=$("searchResult");
+if(!response.ok) throw new Error("Gagal mengubah status");
 
-box.classList.remove("hidden");
+await loadCs();
 
-if(found){
+} catch(error) {
 
-box.innerHTML=
+console.error(error);
 
-'<strong>✅ Customer ditemukan</strong><br>' +
-
-'Nomor: '+found.phone+'<br>' +
-
-'CS: '+found.cs+'<br>' +
-
-'Status: '+(found.chat?"🟢 ADA CHAT":"🔴 TIDAK ADA CHAT")+'<br>' +
-
-'Waktu masuk: '+found.time;
-
-}else{
-
-box.innerHTML=
-
-'<strong>❌ Customer tidak ditemukan</strong><br>' +
-
-'Nomor ini belum tercatat di sistem prototype.';
+alert("Gagal mengubah status CS.");
 
 }
 
 }
 
-function routeCustomer(){
+async function saveCs(){
 
-const online=cs.filter(x=>x.status==="ONLINE");
+const name = $("newName").value.trim();
 
-const box=$("routeResult");
+const phone = $("newPhone").value.trim();
 
-box.classList.remove("hidden");
-
-if(!online.length){
-
-box.innerHTML="⚠️ Tidak ada CS yang sedang ONLINE.";
-
-return;
-
-}
-
-const selected=online[Math.floor(Math.random()*online.length)];
-
-box.innerHTML=
-
-'<strong>🎯 CS terpilih: '+selected.name+'</strong><br>' +
-
-'WhatsApp: '+selected.phone+'<br>' +
-
-'Status: 🟢 ONLINE';
-
-}
-
-$("searchBtn").onclick=searchCustomer;
-
-$("customerSearch").onkeydown=e=>{
-
-if(e.key==="Enter") searchCustomer();
-
-};
-
-$("routeBtn").onclick=routeCustomer;
-
-$("addCsBtn").onclick=()=> $("modal").classList.remove("hidden");
-
-$("cancelBtn").onclick=()=> $("modal").classList.add("hidden");
-
-$("saveBtn").onclick=()=>{
-
-const name=$("newName").value.trim();
-
-const phone=$("newPhone").value.trim();
-
-const status=$("newStatus").value;
+const status = $("newStatus").value;
 
 if(!name || !phone){
 
@@ -192,56 +136,146 @@ return;
 
 }
 
-cs.push({
+try {
 
-id:Date.now(),
+const response = await fetch("/api/cs", {
 
-name,
+method: "POST",
 
-phone,
+headers: { "Content-Type": "application/json" },
 
-status
+body: JSON.stringify({ name: name, phone: phone, status: status })
 
 });
 
-$("newName").value="";
+const data = await response.json();
 
-$("newPhone").value="";
+if(!response.ok) throw new Error(data.error || "Gagal menambahkan CS");
+
+$("newName").value = "";
+
+$("newPhone").value = "";
+
+$("newStatus").value = "OFFLINE";
 
 $("modal").classList.add("hidden");
 
-render();
+await loadCs();
+
+} catch(error) {
+
+console.error(error);
+
+alert(error.message);
+
+}
+
+}
+
+function searchCustomer(){
+
+const q = $("customerSearch").value.trim();
+
+const found = customers.find(x => x.phone === q);
+
+const box = $("searchResult");
+
+box.classList.remove("hidden");
+
+if(found){
+
+box.innerHTML =
+
+'<strong>✅ Customer ditemukan</strong><br>' +
+
+'Nomor: ' + found.phone + '<br>' +
+
+'CS: ' + found.cs + '<br>' +
+
+'Status: ' + (found.chat ? "🟢 ADA CHAT" : "🔴 TIDAK ADA CHAT") + '<br>' +
+
+'Waktu masuk: ' + found.time;
+
+} else {
+
+box.innerHTML = '<strong>❌ Customer tidak ditemukan</strong><br>Nomor ini belum tercatat di sistem.';
+
+}
+
+}
+
+function routeCustomer(){
+
+const online = cs.filter(x => x.status === "ONLINE");
+
+const box = $("routeResult");
+
+box.classList.remove("hidden");
+
+if(!online.length){
+
+box.innerHTML = "⚠️ Tidak ada CS yang sedang ONLINE.";
+
+return;
+
+}
+
+const selected = online[Math.floor(Math.random() * online.length)];
+
+box.innerHTML =
+
+'<strong>🎯 CS terpilih: ' + selected.name + '</strong><br>' +
+
+'WhatsApp: ' + selected.phone + '<br>' +
+
+'Status: 🟢 ONLINE';
+
+}
+
+$("searchBtn").onclick = searchCustomer;
+
+$("customerSearch").onkeydown = e => {
+
+if(e.key === "Enter") searchCustomer();
 
 };
 
-document.querySelectorAll(".nav").forEach(btn=>{
+$("routeBtn").onclick = routeCustomer;
 
-btn.onclick=()=>{
+$("addCsBtn").onclick = () => $("modal").classList.remove("hidden");
 
-document.querySelectorAll(".nav").forEach(x=>x.classList.remove("active"));
+$("cancelBtn").onclick = () => $("modal").classList.add("hidden");
 
-document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+$("saveBtn").onclick = saveCs;
+
+document.querySelectorAll(".nav").forEach(btn => {
+
+btn.onclick = () => {
+
+document.querySelectorAll(".nav").forEach(x => x.classList.remove("active"));
+
+document.querySelectorAll(".page").forEach(x => x.classList.remove("active"));
 
 btn.classList.add("active");
 
 $(btn.dataset.page).classList.add("active");
 
-const titles={
+const titles = {
 
-dashboard:"Dashboard",
+dashboard: "Dashboard",
 
-cs:"Data CS",
+cs: "Data CS",
 
-customers:"Customer",
+customers: "Customer",
 
-routing:"Routing"
+routing: "Routing"
 
 };
 
-$("pageTitle").textContent=titles[btn.dataset.page];
+$("pageTitle").textContent = titles[btn.dataset.page];
 
 };
 
 });
 
-render();
+loadCs();
