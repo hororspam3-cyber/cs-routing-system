@@ -57,6 +57,87 @@ res.status(500).json({ success: false, message: "Database gagal terhubung" });
 
 });
 
+app.get("/api/whatsapp", async (req, res) => {
+
+try {
+
+const result = await pool.query("SELECT whatsapp_accounts.*, cs.name AS cs_name FROM whatsapp_accounts JOIN cs ON whatsapp_accounts.cs_id = cs.id ORDER BY whatsapp_accounts.id ASC");
+
+res.json(result.rows);
+
+} catch (error) {
+
+console.error(error);
+
+res.status(500).json({ error: "Gagal mengambil akun WhatsApp" });
+
+}
+
+});
+
+app.post("/api/whatsapp", async (req, res) => {
+
+try {
+
+const csId = req.body.cs_id;
+
+const phone = req.body.phone;
+
+const status = req.body.status || "OFFLINE";
+
+if (!csId || !phone) {
+
+return res.status(400).json({ error: "CS dan nomor WhatsApp wajib diisi" });
+
+}
+
+const result = await pool.query("INSERT INTO whatsapp_accounts (cs_id, phone, status) VALUES ($1, $2, $3) RETURNING *", [csId, phone, status]);
+
+res.status(201).json(result.rows[0]);
+
+} catch (error) {
+
+console.error(error);
+
+res.status(500).json({ error: "Gagal menyimpan akun WhatsApp" });
+
+}
+
+});
+
+app.patch("/api/whatsapp/:id/status", async (req, res) => {
+
+try {
+
+const status = req.body.status;
+
+const allowed = ["ONLINE", "OFFLINE", "NONAKTIF"];
+
+if (!allowed.includes(status)) {
+
+return res.status(400).json({ error: "Status tidak valid" });
+
+}
+
+const result = await pool.query("UPDATE whatsapp_accounts SET status = $1 WHERE id = $2 RETURNING *", [status, req.params.id]);
+
+if (!result.rows.length) {
+
+return res.status(404).json({ error: "Akun WhatsApp tidak ditemukan" });
+
+}
+
+res.json(result.rows[0]);
+
+} catch (error) {
+
+console.error(error);
+
+res.status(500).json({ error: "Gagal mengubah status WhatsApp" });
+
+}
+
+});
 app.get("/api/cs", async (req, res) => {
 
 try {
