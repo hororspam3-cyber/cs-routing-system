@@ -14,6 +14,14 @@ return '<span class="status inactive">🔴 NONAKTIF</span>';
 
 }
 
+function verificationLabel(verified){
+
+if(verified === true) return '<span class="status online">🟢 TERVERIFIKASI</span>';
+
+return '<span class="status inactive">🔴 BELUM VERIFIKASI</span>';
+
+}
+
 async function loadCs(){
 
 try {
@@ -38,7 +46,9 @@ alert("Gagal mengambil data CS dari database.");
 
 function render(){
 
-$("onlineCount").textContent = cs.filter(x => x.status === "ONLINE").length;
+const verifiedOnline = cs.filter(x => x.status === "ONLINE" && x.whatsapp_verified === true);
+
+$("onlineCount").textContent = verifiedOnline.length;
 
 $("totalCs").textContent = cs.length;
 
@@ -46,7 +56,7 @@ $("chatCount").textContent = customers.filter(x => x.chat).length;
 
 $("noChatCount").textContent = customers.filter(x => !x.chat).length;
 
-$("csTable").innerHTML = cs.map(x => '<tr><td>' + x.name + '</td><td>' + x.phone + '</td><td><span class="status inactive">🔴 BELUM VERIFIKASI</span></td><td>' + statusLabel(x.status) + '</td><td><select onchange="changeStatus(' + x.id + ', this.value)"><option value="ONLINE" ' + (x.status === "ONLINE" ? "selected" : "") + '>ONLINE</option><option value="OFFLINE" ' + (x.status === "OFFLINE" ? "selected" : "") + '>OFFLINE</option><option value="NONAKTIF" ' + (x.status === "NONAKTIF" ? "selected" : "") + '>NONAKTIF</option></select></td></tr>').join("");
+$("csTable").innerHTML = cs.map(x => '<tr><td>' + x.name + '</td><td>' + x.phone + '</td><td>' + verificationLabel(x.whatsapp_verified) + '</td><td>' + statusLabel(x.status) + '</td><td><select onchange="changeStatus(' + x.id + ', this.value)"><option value="ONLINE" ' + (x.status === "ONLINE" ? "selected" : "") + '>ONLINE</option><option value="OFFLINE" ' + (x.status === "OFFLINE" ? "selected" : "") + '>OFFLINE</option><option value="NONAKTIF" ' + (x.status === "NONAKTIF" ? "selected" : "") + '>NONAKTIF</option></select></td></tr>').join("");
 
 $("customerTable").innerHTML = customers.map(x => '<tr><td>' + x.phone + '</td><td>' + x.cs + '</td><td>' + (x.chat ? '<span class="status online">🟢 ADA CHAT</span>' : '<span class="status inactive">🔴 TIDAK ADA CHAT</span>') + '</td><td>' + x.time + '</td></tr>').join("");
 
@@ -55,6 +65,18 @@ $("customerTable").innerHTML = customers.map(x => '<tr><td>' + x.phone + '</td><
 async function changeStatus(id, status){
 
 try {
+
+const selectedCs = cs.find(x => x.id === id);
+
+if(status === "ONLINE" && (!selectedCs || selectedCs.whatsapp_verified !== true)){
+
+alert("CS belum terverifikasi WhatsApp. CS tidak bisa ONLINE sebelum WhatsApp benar-benar terverifikasi.");
+
+await loadCs();
+
+return;
+
+}
 
 const response = await fetch("/api/cs/" + id + "/status",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({status:status})});
 
@@ -66,7 +88,7 @@ await loadCs();
 
 console.error(error);
 
-alert("Gagal mengubah status CS.");
+alert(error.message || "Gagal mengubah status CS.");
 
 }
 
@@ -83,6 +105,14 @@ const status = $("newStatus").value;
 if(!name || !phone){
 
 alert("Nama dan nomor WhatsApp wajib diisi.");
+
+return;
+
+}
+
+if(status === "ONLINE"){
+
+alert("CS baru harus diverifikasi WhatsApp terlebih dahulu sebelum bisa ONLINE.");
 
 return;
 
@@ -272,7 +302,7 @@ box.innerHTML = '<strong>❌ Customer tidak ditemukan</strong><br>Nomor ini belu
 
 function routeCustomer(){
 
-const online = cs.filter(x => x.status === "ONLINE");
+const online = cs.filter(x => x.status === "ONLINE" && x.whatsapp_verified === true);
 
 const box = $("routeResult");
 
@@ -280,7 +310,7 @@ box.classList.remove("hidden");
 
 if(!online.length){
 
-box.innerHTML = "⚠️ Tidak ada CS yang sedang ONLINE.";
+box.innerHTML = "⚠️ Tidak ada CS WhatsApp yang sudah terverifikasi dan sedang ONLINE.";
 
 return;
 
@@ -288,7 +318,7 @@ return;
 
 const selected = online[Math.floor(Math.random() * online.length)];
 
-box.innerHTML = '<strong>🎯 CS terpilih: ' + selected.name + '</strong><br>WhatsApp: ' + selected.phone + '<br>Status: 🟢 ONLINE';
+box.innerHTML = '<strong>🎯 CS terpilih: ' + selected.name + '</strong><br>WhatsApp: ' + selected.phone + '<br>Status: 🟢 ONLINE<br>Verifikasi: 🟢 TERVERIFIKASI';
 
 }
 
